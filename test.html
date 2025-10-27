@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Proctored Exam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a73e8, #6c8ef5);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .exam-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-item {
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+
+        .info-item strong {
+            color: #1a73e8;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .warning h3 {
+            margin-bottom: 5px;
+        }
+
+        .section-info {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #1a73e8;
+        }
+
+        .question-container {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1a73e8;
+            font-size: 18px;
+        }
+
+        .question-text {
+            margin-bottom: 20px;
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin-left: 10px;
+        }
+
+        .option {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            border: 1px solid #eaeaea;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background-color: #f0f7ff;
+            border-color: #1a73e8;
+        }
+
+        .option input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            width: 100%;
+            display: block;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0d62d9;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .submit-btn {
+            background-color: #28a745;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            background: #1a73e8;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            min-width: 120px;
+        }
+
+        .question-timer {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            background: #ff9800;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            min-width: 120px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #1a73e8;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h2 {
+            margin-bottom: 15px;
+            color: #1a73e8;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .results-summary {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .results-summary h2 {
+            color: #1a73e8;
+            margin-bottom: 15px;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 3px solid #28a745;
+        }
+
+        .no-copy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .performance-message {
+            font-size: 18px;
+            color: #6c757d;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .access-code-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #1a73e8;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .fullscreen-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .fullscreen-btn {
+            background-color: #17a2b8;
+            margin-bottom: 10px;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #138496;
+        }
+
+        @media (max-width: 768px) {
+            .exam-info, .timer-container {
+                flex-direction: column;
+            }
+            
+            .timer, .question-timer {
+                margin-bottom: 10px;
+            }
+            
+            .score {
+                font-size: 36px;
+                padding: 15px;
+            }
+        }
+
+        /* Fullscreen styles */
+        :fullscreen .container {
+            max-width: 95%;
+        }
+
+        :-webkit-full-screen .container {
+            max-width: 95%;
+        }
+
+        :-moz-full-screen .container {
+            max-width: 95%;
+        }
+
+        :-ms-fullscreen .container {
+            max-width: 95%;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-copy-overlay" id="noCopyOverlay"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Online Hrishi Examination</h1>
+            <p>Please read all instructions carefully before starting the exam</p>
+        </header>
+
+        <div class="fullscreen-warning" id="fullscreenWarning">
+            <strong>Warning!</strong> You have exited fullscreen mode. Your exam will be terminated in <span id="fullscreenCountdown">10</span> seconds.
+        </div>
+
+        <div class="exam-info">
+            <div class="info-item"><strong>Total Questions:</strong> 20</div>
+            <div class="info-item"><strong>Total Time:</strong> 40 minutes</div>
+            <div class="info-item"><strong>Questions 1-10:</strong> Quantitative Aptitude (90 sec each)</div>
+            <div class="info-item"><strong>Questions 11-15:</strong> Logical Reasoning (75 sec each)</div>
+            <div class="info-item"><strong>Questions 16-20:</strong> Pseudo Code (90 sec each)</div>
+        </div>
+
+        <div class="warning">
+            <h3>Important Instructions</h3>
+            <p>1. You must enter fullscreen mode to start the exam.</p>
+            <p>2. Do not exit fullscreen mode during the exam - it will terminate automatically.</p>
+            <p>3. Do not navigate away from the exam page or open new tabs.</p>
+            <p>4. Text selection and right-click are disabled for security.</p>
+            <p>5. Each question has a specific time limit based on the section.</p>
+        </div>
+
+        <div class="timer-container">
+            <div class="timer" id="timer">40:00</div>
+            <div class="question-timer" id="questionTimer">01:30</div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="section-info">
+            <div class="section-title" id="currentSection">Section 1: Quantitative Aptitude</div>
+            <div class="question-counter" id="questionCounter">Question 1 of 20</div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <!-- Question will be dynamically inserted here -->
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous Question</button>
+            <button id="nextBtn">Next Question</button>
+            <button id="submitBtn" class="submit-btn" style="display: none;">Submit Exam</button>
+        </div>
+    </div>
+
+    <div class="modal" id="accessCodeModal">
+        <div class="modal-content">
+            <h2>Enter Hrishi Code</h2>
+            <p>Please enter your unique access code to begin the exam.</p>
+            <input type="password" class="access-code-input" id="accessCodeInput" placeholder="Enter access code">
+            <p id="accessCodeError" style="color: #dc3545; display: none;">Invalid access code. Please try again.</p>
+            <button id="verifyCodeBtn">Verify Code</button>
+        </div>
+    </div>
+
+    <div class="modal" id="startModal">
+        <div class="modal-content">
+            <h2>Ready to Start Your Exam?</h2>
+            <p>You must enter fullscreen mode to begin the exam.</p>
+            <p>If you exit fullscreen during the exam, it will be terminated automatically.</p>
+            <button class="fullscreen-btn" id="enterFullscreenBtn">Enter Fullscreen & Start Exam</button>
+            <p style="font-size: 14px; color: #6c757d; margin-top: 10px;">If fullscreen doesn't work, click anywhere on the page and try again.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="timeUpModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Time's Up!</h2>
+            <p>Your exam time has ended.</p>
+            <p>Your responses have been submitted automatically.</p>
+            <button id="viewResultsBtn">View Results</button>
+        </div>
+    </div>
+
+    <div class="modal" id="resultsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="results-container" id="resultsContainer">
+                <!-- Results will be displayed here -->
+            </div>
+            <button id="closeResultsBtn">Close</button>
+        </div>
+    </div>
+
+    <div class="modal" id="fullscreenTerminateModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Exam Terminated</h2>
+            <p>Your exam has been terminated because you exited fullscreen mode.</p>
+            <p>This violates the exam security policy.</p>
+        </div>
+    </div>
+
+    <script>
+        // Exam configuration
+        const examConfig = {
+            totalTime: 40 * 60, // 40 minutes in seconds
+            sectionTimes: [90, 75, 90], // Time per question in seconds for each section
+            questionsPerSection: [10, 5, 5],
+            sectionNames: [
+                "Quantitative Aptitude",
+                "Logical & Analytical Reasoning", 
+                "Pseudo Code"
+            ]
+        };
+
+        // Access codes for 2 people
+        const accessCodes = {
+            "EXAM2024A": "Candidate A",
+            "TEST789B": "Candidate B"
+        };
+
+        // State variables
+        let currentQuestion = 0;
+        let currentSection = 0;
+        let totalTimeLeft = examConfig.totalTime;
+        let questionTimeLeft = examConfig.sectionTimes[0];
+        let timerInterval;
+        let questionTimerInterval;
+        let userAnswers = new Array(20).fill(null);
+        let fullscreenCountdown;
+        let isFullscreen = false;
+        let currentUser = "";
+
+        // Correct answers for all questions
+        const correctAnswers = [
+            'b', 'b', 'c', 'c', 'c', 'c', 'c', 'c', 'c', 'd', // Quantitative (1-10)
+            'b', 'a', 'b', 'b', 'b', // Logical (11-15)
+            'b', 'a', 'b', 'a', 'c'  // Pseudo Code (16-20)
+        ];
+
+        // DOM elements
+        const timerElement = document.getElementById('timer');
+        const questionTimerElement = document.getElementById('questionTimer');
+        const progressElement = document.getElementById('progress');
+        const accessCodeModal = document.getElementById('accessCodeModal');
+        const startModal = document.getElementById('startModal');
+        const timeUpModal = document.getElementById('timeUpModal');
+        const resultsModal = document.getElementById('resultsModal');
+        const fullscreenTerminateModal = document.getElementById('fullscreenTerminateModal');
+        const accessCodeInput = document.getElementById('accessCodeInput');
+        const accessCodeError = document.getElementById('accessCodeError');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const enterFullscreenBtn = document.getElementById('enterFullscreenBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const viewResultsBtn = document.getElementById('viewResultsBtn');
+        const closeResultsBtn = document.getElementById('closeResultsBtn');
+        const questionContainer = document.getElementById('questionContainer');
+        const currentSectionElement = document.getElementById('currentSection');
+        const questionCounterElement = document.getElementById('questionCounter');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const noCopyOverlay = document.getElementById('noCopyOverlay');
+        const fullscreenWarning = document.getElementById('fullscreenWarning');
+        const fullscreenCountdownElement = document.getElementById('fullscreenCountdown');
+
+        // Prevent text selection and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Show access code modal on page load
+        window.onload = function() {
+            accessCodeModal.style.display = 'flex';
+        };
+
+        // Verify access code
+        verifyCodeBtn.addEventListener('click', function() {
+            const enteredCode = accessCodeInput.value.trim();
+            
+            if (accessCodes[enteredCode]) {
+                currentUser = accessCodes[enteredCode];
+                accessCodeModal.style.display = 'none';
+                startModal.style.display = 'flex';
+            } else {
+                accessCodeError.style.display = 'block';
+            }
+        });
+
+        // Allow pressing Enter to submit access code
+        accessCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCodeBtn.click();
+            }
+        });
+
+        // Enter fullscreen and start exam
+        enterFullscreenBtn.addEventListener('click', function() {
+            enterFullscreen();
+        });
+
+        // Fullscreen event listeners
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && !document.msFullscreenElement) {
+                // Exited fullscreen
+                if (isFullscreen) {
+                    handleFullscreenExit();
+                }
+            } else {
+                // Entered fullscreen
+                isFullscreen = true;
+                startModal.style.display = 'none';
+                startExam();
+            }
+        }
+
+        function handleFullscreenExit() {
+            isFullscreen = false;
+            fullscreenWarning.style.display = 'block';
+            
+            let countdown = 10;
+            fullscreenCountdownElement.textContent = countdown;
+            
+            fullscreenCountdown = setInterval(function() {
+                countdown--;
+                fullscreenCountdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(fullscreenCountdown);
+                    terminateExamDueToFullscreenExit();
+                }
+            }, 1000);
+        }
+
+        function terminateExamDueToFullscreenExit() {
+            clearInterval(timerInterval);
+            clearInterval(questionTimerInterval);
+            fullscreenWarning.style.display = 'none';
+            fullscreenTerminateModal.style.display = 'flex';
+        }
+
+        function enterFullscreen() {
+            const element = document.documentElement;
+            
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+
+        // Navigation buttons
+        prevBtn.addEventListener('click', function() {
+            if (currentQuestion > 0) {
+                saveAnswer();
+                showQuestion(currentQuestion - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (currentQuestion < 19) {
+                saveAnswer();
+                showQuestion(currentQuestion + 1);
+            } else {
+                submitExam();
+            }
+        });
+
+        submitBtn.addEventListener('click', function() {
+            submitExam();
+        });
+
+        viewResultsBtn.addEventListener('click', function() {
+            timeUpModal.style.display = 'none';
+            showResults();
+        });
+
+        closeResultsBtn.addEventListener('click', function() {
+            resultsModal.style.display = 'none';
+            // Exit fullscreen after viewing results
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        });
+
+        // Initialize exam
+        function startExam() {
+            // Start the timers
+            startTotalTimer();
+            startQuestionTimer();
+            
+            // Show first question
+            showQuestion(0);
+        }
+
+        // Total exam timer
+        function startTotalTimer() {
+            timerInterval = setInterval(function() {
+                totalTimeLeft--;
+                
+                // Update timer display
+                const minutes = Math.floor(totalTimeLeft / 60);
+                const seconds = totalTimeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Update progress bar
+                const progressPercentage = ((examConfig.totalTime - totalTimeLeft) / examConfig.totalTime) * 100;
+                progressElement.style.width = `${progressPercentage}%`;
+                
+                // Check if time is up
+                if (totalTimeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    clearInterval(questionTimerInterval);
+                    timeUpModal.style.display = 'flex';
+                }
+            }, 1000);
+        }
+
+        // Question timer
+        function startQuestionTimer() {
+            // Clear any existing question timer
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            // Set question time based on section
+            const sectionIndex = getSectionForQuestion(currentQuestion);
+            questionTimeLeft = examConfig.sectionTimes[sectionIndex];
+            
+            // Update question timer display
+            updateQuestionTimerDisplay();
+            
+            // Start the timer
+            questionTimerInterval = setInterval(function() {
+                questionTimeLeft--;
+                
+                // Update display
+                updateQuestionTimerDisplay();
+                
+                // Check if question time is up
+                if (questionTimeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    // Auto-save and move to next question
+                    saveAnswer();
+                    if (currentQuestion < 19) {
+                        showQuestion(currentQuestion + 1);
+                    } else {
+                        submitExam();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update question timer display
+        function updateQuestionTimerDisplay() {
+            const minutes = Math.floor(questionTimeLeft / 60);
+            const seconds = questionTimeLeft % 60;
+            questionTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running low
+            if (questionTimeLeft <= 10) {
+                questionTimerElement.style.backgroundColor = '#dc3545';
+            } else if (questionTimeLeft <= 30) {
+                questionTimerElement.style.backgroundColor = '#ff9800';
+            } else {
+                questionTimerElement.style.backgroundColor = '#1a73e8';
+            }
+        }
+
+        // Show specific question
+        function showQuestion(questionIndex) {
+            currentQuestion = questionIndex;
+            currentSection = getSectionForQuestion(questionIndex);
+            
+            // Update section info
+            currentSectionElement.textContent = `Section ${currentSection + 1}: ${examConfig.sectionNames[currentSection]}`;
+            
+            // Update question counter
+            questionCounterElement.textContent = `Question ${questionIndex + 1} of 20`;
+            
+            // Update navigation buttons
+            prevBtn.disabled = (questionIndex === 0);
+            
+            if (questionIndex === 19) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+            
+            // Display the question
+            displayQuestion(questionIndex);
+            
+            // Restart question timer
+            startQuestionTimer();
+        }
+
+        // Get section for a question
+        function getSectionForQuestion(questionIndex) {
+            if (questionIndex < 10) return 0; // Quantitative
+            if (questionIndex < 15) return 1; // Logical
+            return 2; // Pseudo Code
+        }
+
+        // Display question
+        function displayQuestion(questionIndex) {
+            const question = getQuestionData(questionIndex);
+            
+            let optionsHTML = '';
+            question.options.forEach((option, index) => {
+                const optionLetter = String.fromCharCode(97 + index); // a, b, c, d
+                optionsHTML += `
+                    <div class="option">
+                        <input type="radio" id="q${questionIndex}_${optionLetter}" name="q${questionIndex}" value="${optionLetter}" 
+                               ${userAnswers[questionIndex] === optionLetter ? 'checked' : ''}>
+                        <label for="q${questionIndex}_${optionLetter}">${option}</label>
+                    </div>
+                `;
+            });
+            
+            questionContainer.innerHTML = `
+                <div class="question-number">Question ${questionIndex + 1}</div>
+                <div class="question-text">${question.text}</div>
+                <div class="options">${optionsHTML}</div>
+            `;
+            
+            // Add event listeners to options
+            document.querySelectorAll(`input[name="q${questionIndex}"]`).forEach(radio => {
+                radio.addEventListener('change', function() {
+                    userAnswers[questionIndex] = this.value;
+                });
+            });
+        }
+
+        // Save current answer
+        function saveAnswer() {
+            const selectedOption = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestion] = selectedOption.value;
+            }
+        }
+
+        // Submit exam
+        function submitExam() {
+            clearInterval(timerInterval);
+            clearInterval(questionTimerInterval);
+            showResults();
+        }
+
+        // Show results - Only final score
+        function showResults() {
+            // Calculate score
+            let score = 0;
+            
+            for (let i = 0; i < 20; i++) {
+                if (userAnswers[i] === correctAnswers[i]) {
+                    score++;
+                }
+            }
+            
+            // Performance message based on score
+            let performanceMessage = "";
+            if (score >= 18) {
+                performanceMessage = "Excellent performance!";
+            } else if (score >= 15) {
+                performanceMessage = "Very good performance!";
+            } else if (score >= 12) {
+                performanceMessage = "Good performance!";
+            } else if (score >= 8) {
+                performanceMessage = "Average performance.";
+            } else {
+                performanceMessage = "Keep practicing to improve.";
+            }
+            
+            // Generate results HTML - Only showing final score
+            let resultsHTML = `
+                <div class="results-summary">
+                    <h2>Exam Completed</h2>
+                    <p>Candidate: ${currentUser}</p>
+                    <p>Your exam has been successfully submitted.</p>
+                    <div class="score">${score}/20</div>
+                    <div class="performance-message">${performanceMessage}</div>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = resultsHTML;
+            resultsModal.style.display = 'flex';
+        }
+
+        // Get question data
+        function getQuestionData(index) {
+            const questions = [
+                // Quantitative (1-10)
+                { 
+                    text: "If a train running at 60 km/h crosses a pole in 9 seconds, what is the length of the train?", 
+                    options: ["120 m", "150 m", "180 m", "200 m"] 
+                },
+                { 
+                    text: "A can complete a work in 10 days and B in 15 days. If they work together, in how many days will they finish the work?", 
+                    options: ["5 days", "6 days", "7 days", "8 days"] 
+                },
+                { 
+                    text: "If 5x – 3 = 2x + 9, find x.", 
+                    options: ["3", "4", "6", "12"] 
+                },
+                { 
+                    text: "The ratio of ages of A and B is 4:5. If A's age is 24, what is B's age?", 
+                    options: ["26", "28", "30", "32"] 
+                },
+                { 
+                    text: "The average of 6, 8, 10, 12, 14 is:", 
+                    options: ["9", "10", "11", "12"] 
+                },
+                { 
+                    text: "Simple interest on ₹5000 at 8% p.a. for 2 years is:", 
+                    options: ["₹600", "₹700", "₹800", "₹900"] 
+                },
+                { 
+                    text: "The sum of first 20 natural numbers is:", 
+                    options: ["190", "200", "210", "220"] 
+                },
+                { 
+                    text: "If the cost price of 12 pens is equal to the selling price of 10 pens, profit % is:", 
+                    options: ["10%", "15%", "20%", "25%"] 
+                },
+                { 
+                    text: "A man covers 240 km in 4 hours. What is his speed in m/s?", 
+                    options: ["12", "15", "16.67", "20"] 
+                },
+                { 
+                    text: "The least number which is exactly divisible by 12, 18, 21, and 30 is:", 
+                    options: ["630", "360", "420", "1260"] 
+                },
+                
+                // Logical Reasoning (11-15)
+                { 
+                    text: "If CAT = 24 and DOG = 26, then BAT = ?", 
+                    options: ["22", "23", "24", "25"] 
+                },
+                { 
+                    text: "Find the odd one out:", 
+                    options: ["16", "25", "36", "49"] 
+                },
+                { 
+                    text: "Statements: All roses are flowers. Some flowers are red. Conclusions: 1. Some roses are red. 2. Some flowers are roses.", 
+                    options: ["Only 1 follows", "Only 2 follows", "Both follow", "None follows"] 
+                },
+                { 
+                    text: "Arrange the words in dictionary order: 1. Pretty 2. Present 3. Pressure 4. Presume", 
+                    options: ["2,3,4,1", "2,4,3,1", "3,2,1,4", "4,3,2,1"] 
+                },
+                { 
+                    text: 'If "PAPER" is coded as "OZODQ", then "WATER" will be coded as:', 
+                    options: ["VZS DQ", "VZSDQ", "VXSDQ", "VZRDQ"] 
+                },
+                
+                // Pseudo Code (16-20)
+                { 
+                    text: `What is the output of this code?<br>
+                    int x = 5, y = 10;<br>
+                    x = x + y;<br>
+                    y = x - y;<br>
+                    x = x - y;<br>
+                    print(x, y);`, 
+                    options: ["5 10", "10 5", "15 5", "0 15"] 
+                },
+                { 
+                    text: `What is the output of this code?<br>
+                    int a = 2, b = 3;<br>
+                    for(i = 1; i <= b; i++)<br>
+                       a = a * i;<br>
+                    print(a);`, 
+                    options: ["12", "6", "2", "8"] 
+                },
+                { 
+                    text: `What is the output of this code?<br>
+                    int n = 5, sum = 0;<br>
+                    for(i=1; i<=n; i++)<br>
+                       if(i%2==0)<br>
+                          sum = sum + i;<br>
+                    print(sum);`, 
+                    options: ["5", "6", "10", "15"] 
+                },
+                { 
+                    text: `What series is printed by this code?<br>
+                    int a=1, b=1, n=5;<br>
+                    for(i=1; i<=n; i++){<br>
+                       print(a);<br>
+                       int temp = a + b;<br>
+                       a = b;<br>
+                       b = temp;<br>
+                    }`, 
+                    options: ["1 1 2 3 5", "1 2 3 4 5", "1 3 4 7 11", "1 1 3 5 9"] 
+                },
+                { 
+                    text: `What is the output of this code?<br>
+                    int count = 0;<br>
+                    for(i=1; i<=5; i++){<br>
+                      for(j=1; j<=i; j++){<br>
+                         count++;<br>
+                      }<br>
+                    }<br>
+                    print(count);`, 
+                    options: ["5", "10", "15", "25"] 
+                }
+            ];
+            
+            return questions[index];
+        }
+    </script>
+</body>
+</html>
