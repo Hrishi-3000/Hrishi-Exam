@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "name": "online-timed-exam",
+  "name": "hrishi-exam-72v3",
   "builds": [
     {
-      "src": "package.json",
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
